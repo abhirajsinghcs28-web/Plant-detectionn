@@ -1,0 +1,29 @@
+{
+  "name": "plant-disease-severity-estimation",
+  "version": "1.0.0",
+  "description": "Agritech Self-Supervised Cross-Domain Vision Transformers for Fine-Grained Crop Leaf Disease Severity Estimation",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:server": "cd backend && npm run dev",
+    "dev:client": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm run dev",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "test:predict": "cd backend && node test-predict.js",
+    "test:suite": "cd backend && node test-suite.js"
+  },
+  "keywords": [
+    "agritech",
+    "vision-transformer",
+    "crop-disease",
+    "severity-estimation",
+    "react",
+    "express",
+    "mongodb"
+  ],
+  "author": "Agritech Research Team",
+  "license": "ISC"
+}
