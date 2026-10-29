@@ -92,15 +92,17 @@ async function runTests() {
   let createdRecordId = null;
 
   // TEST 1: Health check
+  let currentAiMode = 'mock';
   try {
     const res = await httpRequest({ method: 'GET', path: '/api/health' });
     if (
       res.statusCode === 200 &&
       res.data?.status === 'online' &&
       res.data?.database === 'connected' &&
-      res.data?.aiService?.mode === 'mock'
+      (res.data?.aiService?.mode === 'mock' || res.data?.aiService?.mode === 'real')
     ) {
-      console.log('✅ TEST 1 PASSED: GET /api/health reported online, MongoDB connected, and AI mock mode.');
+      currentAiMode = res.data.aiService.mode;
+      console.log(`✅ TEST 1 PASSED: GET /api/health reported online, MongoDB connected, AI mode: ${currentAiMode}.`);
       passed++;
     } else {
       console.error('❌ TEST 1 FAILED: Unexpected health check output:', res.data);
@@ -137,15 +139,19 @@ async function runTests() {
     );
 
     const res = await httpRequest({ method: 'POST', path: '/api/predict', headers, body: payload });
+    const isModeValid =
+      currentAiMode === 'real'
+        ? res.data?.data?.isMock === false
+        : res.data?.data?.isMock === true && res.data?.data?.segmentationMask === null;
+
     if (
       res.statusCode === 200 &&
       res.data?.success === true &&
-      res.data?.data?.isMock === true &&
-      res.data?.data?.segmentationMask === null &&
+      isModeValid &&
       typeof res.data?.data?.severity === 'number'
     ) {
       createdRecordId = res.data.data.id;
-      console.log('✅ TEST 2 PASSED: POST /api/predict correctly generated mock result with isMock:true & segmentationMask:null.');
+      console.log(`✅ TEST 2 PASSED: POST /api/predict correctly generated valid result (mode=${currentAiMode}, isMock=${res.data.data.isMock}).`);
       passed++;
     } else {
       console.error('❌ TEST 2 FAILED: Prediction response does not conform to contract:', res.data);

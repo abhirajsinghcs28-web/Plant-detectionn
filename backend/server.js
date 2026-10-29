@@ -98,7 +98,7 @@ function startServer(portToUse, retryCount = 0) {
         }, 2000);
       } else {
         console.error(`\n❌ [Server Error] Port ${portToUse} is occupied by another application.`);
-        console.error(`💡 Hint: Close any other terminal or app using port ${portToUse}.\n`);
+        console.error(`💡 Quick fix: Run 'npm run free:port' in the root or backend terminal to immediately free port ${portToUse}.\n`);
       }
     } else {
       console.error('❌ [Server Error]', err);

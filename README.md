@@ -16,9 +16,10 @@
 6. [Installation & Setup](#6-installation--setup)
 7. [How to Run the Application](#7-how-to-run-the-application)
 8. [API Endpoints](#8-api-endpoints)
-9. [Automated Testing Suite](#9-automated-testing-suite)
-10. [Scientific & Research Honesty Policy](#10-scientific--research-honesty-policy)
-11. [Future Improvements](#11-future-improvements)
+9. [Automated Testing & Parity Verification](#9-automated-testing-suite)
+10. [Project Report & Research Paper Deliverables](#10-project-report--research-paper-deliverables)
+11. [Scientific & Research Honesty Policy](#11-scientific--research-honesty-policy)
+12. [Future Improvements](#12-future-improvements)
 
 ---
 
@@ -287,9 +288,46 @@ Output of automated test suite:
 ===========================================================
 ```
 
+### Standalone Model Parity Verification:
+To verify that web application outputs match standalone model inference on unseen specimens:
+
+```bash
+# Terminal 1: Launch ViT Model Microservice (Port 8000)
+npm run start:model
+
+# Terminal 2: Run Parity Verification
+npm run test:parity
+```
+
+```text
+================================================================
+🔬 UNSEEN SPECIMEN & MODEL PARITY VERIFICATION SUITE
+🌐 Web Gateway Endpoint:   http://localhost:5000/api/predict
+🤖 Model Service Endpoint: http://localhost:8000/predict
+================================================================
+
+🌿 Testing Unseen Specimen: [Tomato] - unseen_tomato_specimen.jpg
+   - Target Crop:       Model=Tomato | Web=Tomato (Match: ✅)
+   - Predicted Disease: Model=Late Blight | Web=Late Blight (Match: ✅)
+   - Severity %:        Model=36.8% | Web=36.8% (Diff: 0.00)
+   - Model Confidence:  Model=0.94 | Web=0.94 (Diff: 0.00)
+   ✅ PARITY VERIFIED: Outputs match the standalone model exactly.
+================================================================
+🎯 Model Parity Verification: ALL TESTS PASSED
+================================================================
+```
+
 ---
 
-## 10. Scientific & Research Honesty Policy
+## 10. Project Report & Research Paper Deliverables
+Full academic documentation covering System Design, Implementation Architecture, and Application Workflow is prepared in:
+- **Report & Paper Document**: [`docs/MEMBER_3_REPORT_SECTIONS.md`](./docs/MEMBER_3_REPORT_SECTIONS.md)
+- **High-Resolution Application Screenshots**: [`docs/screenshots/`](./docs/screenshots/)
+- **Live Video Walkthrough**: [`docs/screenshots/demo_walkthrough.webp`](./docs/screenshots/demo_walkthrough.webp)
+
+---
+
+## 11. Scientific & Research Honesty Policy
 
 In accordance with academic standards:
 1. **No Fake Neural Outputs**: The application **does not** generate synthetic SVG shapes or pseudo-random bounding boxes masquerading as Vision Transformer attention maps. When a mask is not returned by the model, `segmentationMask` is explicitly `null`, and the UI displays an honest callout box.
@@ -298,7 +336,7 @@ In accordance with academic standards:
 
 ---
 
-## 11. Future Improvements
+## 12. Future Improvements
 
 1. **Direct ONNX Runtime Node.js Integration**: Run lightweight quantized Vision Transformer `.onnx` models natively inside Node.js without requiring a separate Python runtime.
 2. **Multi-Leaf Batch Processing**: Allow uploading multiple leaf specimens from a single plot to calculate canopy-level disease severity index.

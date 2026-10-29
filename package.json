@@ -13,7 +13,10 @@
     "install:frontend": "cd frontend && npm install",
     "install:all": "npm run install:backend && npm run install:frontend",
     "test:predict": "cd backend && node test-predict.js",
-    "test:suite": "cd backend && node test-suite.js"
+    "test:suite": "cd backend && node test-suite.js",
+    "test:parity": "cd backend && node verify-parity.js",
+    "start:model": "cd backend && python model_service.py",
+    "free:port": "powershell -Command \"Get-NetTCPConnection -LocalPort 5000 -ErrorAction SilentlyContinue | ForEach-Object { if ($_.OwningProcess -gt 0) { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue } }\""
   },
   "keywords": [
     "agritech",
