@@ -2,7 +2,8 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 
-const filePath = 'C:/Users/sabhi/.gemini/antigravity-ide/brain/60ed3377-7310-4fcb-bd13-a45c9d3d70a3/tomato_leaf_sample_1789650925019.jpg';
+const samplePath = path.join(__dirname, '..', 'frontend', 'public', 'sample-leaves', 'tomato_late_blight.jpg');
+const filePath = fs.existsSync(samplePath) ? samplePath : path.join(__dirname, 'uploads', 'sample.jpg');
 const boundary = '----WebKitFormBoundary7MA4YWxkTrZu0gW';
 
 const fileContent = fs.readFileSync(filePath);

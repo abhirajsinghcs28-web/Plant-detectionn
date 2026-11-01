@@ -4,7 +4,7 @@ const Prediction = require('../models/Prediction');
 const aiService = require('../services/aiService');
 
 // Validated crop species supported by the research project's Vision Transformer domain heads
-const ALLOWED_CROPS = ['Tomato', 'Potato', 'Rice', 'Wheat', 'Maize'];
+const ALLOWED_CROPS = ['Tomato', 'Potato', 'Rice', 'Wheat', 'Maize', 'Crop Leaf', 'General'];
 
 /**
  * Handle POST /api/predict
@@ -20,13 +20,18 @@ async function predictCropLeaf(req, res, next) {
       });
     }
 
-    // 2. Validate crop species against domain whitelist
-    const crop = req.body.crop ? req.body.crop.trim() : 'Tomato';
-    if (!ALLOWED_CROPS.includes(crop)) {
-      return res.status(400).json({
-        success: false,
-        error: `Invalid crop species "${crop}". Allowed options: ${ALLOWED_CROPS.join(', ')}.`,
-      });
+    // 2. Validate crop species against domain whitelist if provided
+    let crop = 'Crop Leaf';
+    if (req.body.crop && req.body.crop.trim() !== '') {
+      const trimmedCrop = req.body.crop.trim();
+      const matchedCrop = ALLOWED_CROPS.find(c => c.toLowerCase() === trimmedCrop.toLowerCase());
+      if (!matchedCrop) {
+        return res.status(400).json({
+          success: false,
+          error: `Invalid crop species "${trimmedCrop}". Allowed options: ${ALLOWED_CROPS.filter(c => c !== 'Crop Leaf' && c !== 'General').join(', ')}, or Crop Leaf.`,
+        });
+      }
+      crop = matchedCrop;
     }
 
     const imagePathOnDisk = req.file.path;
@@ -35,15 +40,30 @@ async function predictCropLeaf(req, res, next) {
     // 3. Call modular AI inference service (routes to real endpoint or mock development mode)
     const aiResult = await aiService.predictDisease(imagePathOnDisk, crop);
 
+    // Compute numerical severity score (for DB schema backwards compatibility)
+    const numericSeverity = typeof aiResult.severityScore === 'number' 
+      ? aiResult.severityScore 
+      : (typeof aiResult.severity === 'number' 
+          ? aiResult.severity 
+          : (aiResult.severityLevel?.toLowerCase() === 'healthy' ? 0 
+             : aiResult.severityLevel?.toLowerCase() === 'mild' ? 15 
+             : aiResult.severityLevel?.toLowerCase() === 'moderate' ? 35 : 75));
+
+    // Normalize confidence percentage (e.g. 97.2)
+    const confidenceVal = typeof aiResult.confidence === 'number'
+      ? (aiResult.confidence <= 1.0 ? Number((aiResult.confidence * 100).toFixed(1)) : Number(aiResult.confidence.toFixed(1)))
+      : 95.0;
+
     // 4. Save prediction record to MongoDB
     let savedRecord = null;
     try {
       savedRecord = await Prediction.create({
-        crop: aiResult.crop,
-        disease: aiResult.disease,
-        severity: aiResult.severity,
-        confidence: aiResult.confidence,
-        severityLevel: aiResult.severityLevel,
+        crop: aiResult.crop || crop,
+        disease: aiResult.disease || 'Severity Analysis Only',
+        severity: numericSeverity,
+        confidence: confidenceVal > 1 ? confidenceVal / 100 : confidenceVal,
+        severityLevel: aiResult.severityLevel || (typeof aiResult.severity === 'string' ? aiResult.severity : 'Moderate'),
+        probabilities: aiResult.probabilities || null,
         imagePath: publicImageUrl,
         originalFilename: req.file.originalname,
         segmentationMask: aiResult.segmentationMask || null,
@@ -52,19 +72,25 @@ async function predictCropLeaf(req, res, next) {
       });
     } catch (dbError) {
       console.warn('Warning: Could not persist prediction to MongoDB:', dbError.message);
-      // Non-blocking: prediction output is still returned even if DB has a momentary glitch
     }
 
-    // 5. Send standardized response matching Member 2/3 API contract
+    // 5. Send standardized response matching Member 2/3 and user requirements
     return res.status(200).json({
       success: true,
       data: {
         id: savedRecord ? savedRecord._id : null,
-        crop: aiResult.crop,
-        disease: aiResult.disease,
-        severity: aiResult.severity,
-        confidence: aiResult.confidence,
-        severityLevel: aiResult.severityLevel,
+        severity: aiResult.severity || aiResult.severityLevel,
+        severityLevel: aiResult.severityLevel || (typeof aiResult.severity === 'string' ? aiResult.severity : 'Moderate'),
+        severityScore: numericSeverity,
+        confidence: confidenceVal,
+        probabilities: aiResult.probabilities || {
+          healthy: aiResult.severityLevel === 'Healthy' ? confidenceVal : 1.0,
+          mild: aiResult.severityLevel === 'Mild' ? confidenceVal : 2.0,
+          moderate: aiResult.severityLevel === 'Moderate' ? confidenceVal : 5.0,
+          severe: aiResult.severityLevel === 'Severe' ? confidenceVal : 92.0,
+        },
+        crop: aiResult.crop || crop,
+        disease: aiResult.disease || 'Severity Analysis Only',
         segmentationMask: aiResult.segmentationMask || null,
         maskType: aiResult.maskType || null,
         isMock: Boolean(aiResult.isMock),

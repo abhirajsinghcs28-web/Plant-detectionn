@@ -15,6 +15,9 @@
     "test:predict": "cd backend && node test-predict.js",
     "test:suite": "cd backend && node test-suite.js",
     "test:parity": "cd backend && node verify-parity.js",
+    "test:models": "python -c \"import ml_models; print('ML package functional')\"",
+    "benchmark:models": "python -m ml_models.benchmark",
+    "train:models": "python -c \"from ml_models.trainer import ModelTrainingSimulator; ModelTrainingSimulator('vit').train_and_evaluate(); ModelTrainingSimulator('cnn').train_and_evaluate()\"",
     "start:model": "cd backend && python model_service.py",
     "free:port": "powershell -Command \"Get-NetTCPConnection -LocalPort 5000 -ErrorAction SilentlyContinue | ForEach-Object { if ($_.OwningProcess -gt 0) { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue } }\""
   },

@@ -8,30 +8,32 @@ const mongoose = require('mongoose');
 const predictionSchema = new mongoose.Schema({
   crop: {
     type: String,
-    required: [true, 'Crop name is required'],
+    default: 'Crop Leaf',
     trim: true,
   },
   disease: {
     type: String,
-    required: [true, 'Disease name is required'],
+    default: 'Severity Analysis Only',
     trim: true,
   },
   severity: {
     type: Number,
-    required: [true, 'Severity percentage is required'],
+    default: 0,
     min: [0, 'Severity cannot be negative'],
     max: [100, 'Severity cannot exceed 100%'],
   },
   confidence: {
     type: Number,
     required: [true, 'Confidence score is required'],
-    min: 0,
-    max: 1,
   },
   severityLevel: {
     type: String,
-    enum: ['Healthy', 'Mild', 'Moderate', 'Severe'],
+    enum: ['Healthy', 'Mild', 'Moderate', 'Severe', 'healthy', 'mild', 'moderate', 'severe'],
     default: 'Moderate',
+  },
+  probabilities: {
+    type: Object,
+    default: null,
   },
   imagePath: {
     type: String,
@@ -42,7 +44,7 @@ const predictionSchema = new mongoose.Schema({
   },
   segmentationMask: {
     type: String,
-    default: null, // Data URI or path to mask image; null if not provided by model
+    default: null,
   },
   maskType: {
     type: String,
@@ -51,7 +53,7 @@ const predictionSchema = new mongoose.Schema({
   },
   isMock: {
     type: Boolean,
-    default: false, // True if produced under AI_MODE=mock
+    default: false,
   },
   timestamp: {
     type: Date,

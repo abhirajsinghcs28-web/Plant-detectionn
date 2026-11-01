@@ -3,66 +3,116 @@ import SeverityDisplay from './SeverityDisplay';
 
 /**
  * Result Card Component
- * Summarizes the diagnosis, severity metrics, and honest inference provenance.
+ * Formatted specifically for Vision Transformer 4-tier severity estimation.
+ * Displays:
+ * 1. Estimated Leaf Severity (Healthy, Mild, Moderate, Severe)
+ * 2. Model Confidence Score (%)
+ * 3. Probability distribution across all four classes
+ * 4. Contextual explanation
+ * 5. Agricultural disclaimer
  */
 export default function ResultCard({ result }) {
   if (!result) return null;
 
-  const { crop, disease, severity, confidence, severityLevel, timestamp, isMock } = result;
+  // Extract fields with case-insensitive normalization
+  const rawSeverity = result.severityLevel || result.severity || 'Moderate';
+  const severityLevel =
+    typeof rawSeverity === 'string'
+      ? rawSeverity.charAt(0).toUpperCase() + rawSeverity.slice(1).toLowerCase()
+      : 'Moderate';
+
+  const confidence = result.confidence;
+  const probabilities = result.probabilities || null;
+  const timestamp = result.timestamp;
+
+  // Color mapping
+  const getBadgeStyle = (level) => {
+    switch (level.toLowerCase()) {
+      case 'healthy':
+        return { color: '#16a34a', bg: '#dcfce7', border: '#86efac' };
+      case 'mild':
+        return { color: '#2563eb', bg: '#dbeafe', border: '#93c5fd' };
+      case 'moderate':
+        return { color: '#d97706', bg: '#fef3c7', border: '#fcd34d' };
+      case 'severe':
+        return { color: '#dc2626', bg: '#fee2e2', border: '#fca5a5' };
+      default:
+        return { color: '#d97706', bg: '#fef3c7', border: '#fcd34d' };
+    }
+  };
+
+  const badgeStyle = getBadgeStyle(severityLevel);
+
+  // Results explanation based on model prediction
+  const getSeverityExplanation = (level) => {
+    switch (level.toLowerCase()) {
+      case 'healthy':
+        return 'The model detected little to no visible symptoms in the uploaded leaf image.';
+      case 'mild':
+        return 'The model detected early or limited visible symptoms.';
+      case 'moderate':
+        return 'The model detected noticeable symptoms that may require further attention.';
+      case 'severe':
+        return 'The model detected extensive visible symptoms.';
+      default:
+        return 'The model evaluated the visible foliar symptoms of the uploaded leaf.';
+    }
+  };
+
+  const formattedConfidence =
+    typeof confidence === 'number'
+      ? `${confidence <= 1.0 ? (confidence * 100).toFixed(1) : confidence.toFixed(1)}%`
+      : 'N/A';
 
   return (
     <div className="card result-card">
-      <div className="card-title">
-        <span>Inference & Severity Assessment</span>
-        <span className="timestamp-text">
-          {timestamp ? new Date(timestamp).toLocaleString() : new Date().toLocaleString()}
-        </span>
-      </div>
-
-      {/* Honest Provenance Banner */}
-      {isMock ? (
-        <div className="alert alert-warning" role="alert">
-          <strong>⚠️ DEMO / MOCK INFERENCE:</strong> This assessment was generated using local
-          development simulation data (<code>AI_MODE=mock</code>). The actual Vision Transformer
-          model from Member 2 has not yet been connected to this backend.
-        </div>
-      ) : (
-        <div className="alert alert-success" role="alert">
-          <strong>🟢 REAL AI INFERENCE:</strong> Assessment produced by the connected Vision
-          Transformer model inference pipeline.
-        </div>
-      )}
-
-      <div className="result-summary-grid">
-        <div className="summary-item">
-          <span className="summary-label">Target Crop Specimen</span>
-          <span className="summary-value crop-highlight">{crop}</span>
-        </div>
-        <div className="summary-item">
-          <span className="summary-label">Diagnosed Condition</span>
-          <span className="summary-value disease-highlight">{disease}</span>
-        </div>
-        <div className="summary-item">
-          <span className="summary-label">Severity Classification</span>
-          <span className="summary-value">{severityLevel}</span>
+      <div className="result-card-header">
+        <div className="header-meta">
+          <span className="analysis-tag">VISION TRANSFORMER INFERENCE</span>
+          <span className="timestamp-text">
+            {timestamp ? new Date(timestamp).toLocaleString() : new Date().toLocaleString()}
+          </span>
         </div>
       </div>
 
-      {/* Visual Severity and Confidence Breakdown */}
+      {/* Primary Severity Banner */}
+      <div
+        className="estimated-severity-banner"
+        style={{
+          backgroundColor: badgeStyle.bg,
+          borderColor: badgeStyle.border,
+        }}
+      >
+        <div className="banner-left">
+          <span className="banner-subtitle">ESTIMATED LEAF SEVERITY</span>
+          <h2 className="banner-title" style={{ color: badgeStyle.color }}>
+            {severityLevel}
+          </h2>
+        </div>
+        <div className="banner-right">
+          <span className="confidence-pill-label">Model Confidence</span>
+          <span className="confidence-pill-val" style={{ color: badgeStyle.color }}>
+            {formattedConfidence}
+          </span>
+        </div>
+      </div>
+
+      {/* Visual Severity Indicator & 4-Class Breakdown */}
       <SeverityDisplay
-        severity={severity}
         severityLevel={severityLevel}
         confidence={confidence}
+        probabilities={probabilities}
       />
 
-      {/* Scientific Diagnostics Assessment */}
-      <div className="research-notes-box">
-        <h4>Agronomic Assessment:</h4>
-        <p>
-          {disease === 'Healthy Leaf'
-            ? `The ${crop} specimen displays uniform foliar coloration with no detectable necrotic lesions or chlorosis. Standard canopy monitoring advised.`
-            : `Specimen displays symptoms characteristic of ${crop} ${disease}. The estimated severity index is ${typeof severity === 'number' ? severity.toFixed(1) : 0}% (${severityLevel} tier). Locally validated fungicide/bactericide protocols should be cross-referenced.`}
-        </p>
+      {/* Results Explanation Section */}
+      <div className="results-explanation-card">
+        <h4 className="explanation-title">Analysis Assessment</h4>
+        <p className="explanation-text">{getSeverityExplanation(severityLevel)}</p>
+      </div>
+
+      {/* Agricultural Disclaimer */}
+      <div className="agricultural-disclaimer-box">
+        <strong>Notice & Disclaimer:</strong> This is an AI-based severity estimate using a Vision Transformer model and should not be treated as a professional agricultural diagnosis. Field conditions, lighting variations, and cultivar differences can impact visual assessment.
       </div>
     </div>
   );

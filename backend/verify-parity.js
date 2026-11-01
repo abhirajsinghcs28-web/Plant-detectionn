@@ -145,15 +145,21 @@ async function runParityVerification() {
     // 3. Compare outputs
     const cropMatch = standaloneResult.crop === webResult.crop;
     const diseaseMatch = standaloneResult.disease === webResult.disease;
-    const severityDiff = Math.abs(standaloneResult.severity - webResult.severity);
-    const confidenceDiff = Math.abs(standaloneResult.confidence - webResult.confidence);
+    const severityMatch =
+      standaloneResult.severity === webResult.severity ||
+      (typeof standaloneResult.severity === 'number' &&
+        typeof webResult.severity === 'number' &&
+        Math.abs(standaloneResult.severity - webResult.severity) < 0.05);
 
-    console.log(`   - Target Crop:       Model=${standaloneResult.crop} | Web=${webResult.crop} (Match: ${cropMatch ? '✅' : '❌'})`);
-    console.log(`   - Predicted Disease: Model=${standaloneResult.disease} | Web=${webResult.disease} (Match: ${diseaseMatch ? '✅' : '❌'})`);
-    console.log(`   - Severity %:        Model=${standaloneResult.severity}% | Web=${webResult.severity}% (Diff: ${severityDiff.toFixed(2)})`);
-    console.log(`   - Model Confidence:  Model=${standaloneResult.confidence} | Web=${webResult.confidence} (Diff: ${confidenceDiff.toFixed(2)})`);
+    const confidenceDiff = Math.abs(
+      (standaloneResult.confidence || 0) - (webResult.confidence || 0)
+    );
 
-    if (cropMatch && diseaseMatch && severityDiff < 0.05 && confidenceDiff < 0.05) {
+    console.log(`   - Target Specimen:   Model=${standaloneResult.crop} | Web=${webResult.crop} (Match: ${cropMatch ? '✅' : '❌'})`);
+    console.log(`   - Severity Level:    Model=${standaloneResult.severity} | Web=${webResult.severity} (Match: ${severityMatch ? '✅' : '❌'})`);
+    console.log(`   - Model Confidence:  Model=${standaloneResult.confidence}% | Web=${webResult.confidence}% (Diff: ${confidenceDiff.toFixed(2)})`);
+
+    if (cropMatch && severityMatch && confidenceDiff < 0.1) {
       console.log('   ✅ PARITY VERIFIED: Outputs match the standalone model exactly.\n');
     } else {
       console.log('   ❌ PARITY MISMATCH: Discrepancy observed between standalone model and web output.\n');

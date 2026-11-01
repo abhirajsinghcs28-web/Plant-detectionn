@@ -148,7 +148,7 @@ async function runTests() {
       res.statusCode === 200 &&
       res.data?.success === true &&
       isModeValid &&
-      typeof res.data?.data?.severity === 'number'
+      (typeof res.data?.data?.severity === 'number' || typeof res.data?.data?.severity === 'string')
     ) {
       createdRecordId = res.data.data.id;
       console.log(`✅ TEST 2 PASSED: POST /api/predict correctly generated valid result (mode=${currentAiMode}, isMock=${res.data.data.isMock}).`);

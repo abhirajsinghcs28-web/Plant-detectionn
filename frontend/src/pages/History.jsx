@@ -56,10 +56,9 @@ export default function History({ onSelectPrediction }) {
   return (
     <div className="history-page">
       <div className="research-intro-banner">
-        <h2>Prediction Log & Database Records</h2>
+        <h2>Foliar Severity Analysis History</h2>
         <p>
-          Historical repository of analyzed crop leaf specimens, severity percentages, and
-          segmentation masks stored in MongoDB.
+          Historical log of analyzed crop leaf specimens, estimated severity levels, and model probability distributions.
         </p>
       </div>
 

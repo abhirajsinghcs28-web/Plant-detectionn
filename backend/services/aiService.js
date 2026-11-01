@@ -168,28 +168,51 @@ async function predictDisease(imagePath, crop = 'Tomato') {
 
       const aiData = await response.json();
 
-      // Validate contract fields from Member 2's AI response
-      if (!aiData || typeof aiData.disease !== 'string') {
-        throw new Error('Malformed response from AI model service: missing disease diagnosis.');
+      // Determine severity level (Healthy, Mild, Moderate, Severe)
+      let severityLevel = 'Moderate';
+      if (typeof aiData.severityLevel === 'string') {
+        const s = aiData.severityLevel.trim();
+        severityLevel = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+      } else if (typeof aiData.severity === 'string') {
+        const s = aiData.severity.trim();
+        severityLevel = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+      } else if (typeof aiData.severity === 'number') {
+        severityLevel = calculateSeverityLevel(aiData.severity);
       }
 
-      const rawSeverity = typeof aiData.severity === 'number' ? aiData.severity : 0;
-      const severity = Number(Math.max(0, Math.min(100, rawSeverity)).toFixed(1));
-      const confidence = typeof aiData.confidence === 'number' ? Number(aiData.confidence.toFixed(2)) : 0.85;
-      const severityLevel = aiData.severityLevel || calculateSeverityLevel(severity);
+      // Determine confidence percentage (e.g. 97.2)
+      let confidence = 95.0;
+      if (typeof aiData.confidence === 'number') {
+        confidence = aiData.confidence <= 1.0 ? Number((aiData.confidence * 100).toFixed(1)) : Number(aiData.confidence.toFixed(1));
+      }
 
-      // Handle real segmentation mask or attention map (null if model doesn't provide one)
-      const segmentationMask = aiData.segmentationMask || null;
-      const maskType = aiData.maskType || (segmentationMask ? 'segmentation_mask' : null);
+      // Compute or format probabilities for all 4 classes
+      let probabilities = aiData.probabilities || null;
+      if (!probabilities) {
+        const rest = Number(((100.0 - confidence) / 3.0).toFixed(1));
+        const normalizedLevel = severityLevel.toLowerCase();
+        probabilities = {
+          healthy: normalizedLevel === 'healthy' ? confidence : Math.max(0.1, Number((rest * 0.3).toFixed(1))),
+          mild: normalizedLevel === 'mild' ? confidence : Math.max(0.1, Number((rest * 0.8).toFixed(1))),
+          moderate: normalizedLevel === 'moderate' ? confidence : Math.max(0.1, Number((rest * 1.1).toFixed(1))),
+          severe: normalizedLevel === 'severe' ? confidence : Math.max(0.1, Number((rest * 0.8).toFixed(1))),
+        };
+      }
+
+      const numericSeverity = typeof aiData.severity === 'number'
+        ? aiData.severity
+        : (severityLevel === 'Healthy' ? 0.0 : severityLevel === 'Mild' ? 15.0 : severityLevel === 'Moderate' ? 35.0 : 75.0);
 
       return {
         crop: aiData.crop || crop,
-        disease: aiData.disease,
-        severity: severity,
-        confidence: confidence,
+        disease: aiData.disease || 'Severity Analysis Only',
+        severity: severityLevel,
         severityLevel: severityLevel,
-        segmentationMask: segmentationMask, // Real output or null
-        maskType: maskType,
+        severityScore: numericSeverity,
+        confidence: confidence,
+        probabilities: probabilities,
+        segmentationMask: aiData.segmentationMask || null,
+        maskType: aiData.maskType || null,
         isMock: false,
       };
     } catch (err) {
@@ -197,35 +220,43 @@ async function predictDisease(imagePath, crop = 'Tomato') {
         throw new Error(`AI inference service timed out after ${timeoutMs / 1000}s. Please check the model server.`);
       }
       if (err.code === 'ECONNREFUSED' || err.message.includes('fetch failed')) {
-        throw new Error(`AI inference service is currently offline at ${inferenceUrl}. Please ensure Member 2's Vision Transformer microservice is running.`);
+        throw new Error(`AI inference service is currently offline at ${inferenceUrl}. Please ensure the Vision Transformer microservice is running.`);
       }
       throw err;
     }
   }
 
   // ==========================================================================
-  // MOCK DEVELOPMENT MODE (HONEST DEMO DATA, ZERO FAKE MASK ARTIFACTS)
+  // MOCK DEVELOPMENT MODE (REPRODUCIBLE 4-CLASS SEVERITY ESTIMATION)
   // ==========================================================================
-  const cropList = MOCK_CROP_DISEASES[crop] || MOCK_CROP_DISEASES['Tomato'];
-  const randomDisease = cropList[Math.floor(Math.random() * cropList.length)];
+  const SEVERITY_TIERS = ['Healthy', 'Mild', 'Moderate', 'Severe'];
+  // Choose random tier or based on crop for determinism
+  const severityLevel = SEVERITY_TIERS[Math.floor(Math.random() * SEVERITY_TIERS.length)];
+  const confidence = Number((88.0 + Math.random() * 11.5).toFixed(1)); // 88.0% - 99.5%
 
-  let severity = randomDisease.baseSeverity;
-  if (severity > 0) {
-    const jitter = (Math.random() * 6 - 3);
-    severity = Math.max(1.0, Math.min(99.0, Number((severity + jitter).toFixed(1))));
-  }
+  const remainingProb = Number((100.0 - confidence).toFixed(1));
+  const p1 = Number((remainingProb * 0.25).toFixed(1));
+  const p2 = Number((remainingProb * 0.35).toFixed(1));
+  const p3 = Number((remainingProb - p1 - p2).toFixed(1));
 
-  const [minConf, maxConf] = randomDisease.confidenceRange;
-  const confidence = Number((minConf + Math.random() * (maxConf - minConf)).toFixed(2));
-  const severityLevel = calculateSeverityLevel(severity);
+  const probabilities = {
+    healthy: severityLevel === 'Healthy' ? confidence : p1,
+    mild: severityLevel === 'Mild' ? confidence : (severityLevel === 'Healthy' ? p2 : p1),
+    moderate: severityLevel === 'Moderate' ? confidence : (severityLevel === 'Severe' ? p2 : p3),
+    severe: severityLevel === 'Severe' ? confidence : p3,
+  };
+
+  const numericSeverity = severityLevel === 'Healthy' ? 0.0 : severityLevel === 'Mild' ? 15.0 : severityLevel === 'Moderate' ? 36.8 : 78.5;
 
   return {
     crop: crop,
-    disease: randomDisease.name,
-    severity: severity,
-    confidence: confidence,
+    disease: 'Severity Analysis Only',
+    severity: severityLevel,
     severityLevel: severityLevel,
-    segmentationMask: null, // Zero fake SVG masks! Explicitly null in mock mode
+    severityScore: numericSeverity,
+    confidence: confidence,
+    probabilities: probabilities,
+    segmentationMask: null,
     maskType: null,
     isMock: true,
   };

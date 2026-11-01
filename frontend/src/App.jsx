@@ -82,10 +82,10 @@ export default function App() {
       {/* Academic Research Footer */}
       <footer className="app-footer">
         <p>
-          Research Project: <strong>Agritech Self-Supervised Cross-Domain Vision Transformers for Fine-Grained Crop Leaf Disease Severity Estimation</strong>
+          Research Project: <strong>AI-Powered Crop Leaf Severity Analysis using Vision Transformers (ViT)</strong>
         </p>
         <p style={{ marginTop: '4px' }}>
-          Tech Stack: React.js • Node.js • Express.js • MongoDB • Vision Transformers (ViT)
+          Architecture: Vision Transformer (ViT) • Input: 224 × 224 RGB • 4 Severity Levels (Healthy, Mild, Moderate, Severe)
         </p>
       </footer>
     </div>

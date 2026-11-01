@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import CropSelector from '../components/CropSelector';
 import ImageUpload from '../components/ImageUpload';
 import ResultCard from '../components/ResultCard';
-import SegmentationViewer from '../components/SegmentationViewer';
 import { predictLeaf } from '../services/api';
 
 /**
  * Main Analysis Page (Home)
- * Orchestrates crop selection, leaf upload, AI inference dispatch, and results visualization.
+ * Focused on AI-Powered Crop Leaf Severity Analysis using Vision Transformers.
  */
 export default function Home({ onPredictionCompleted, currentResult, setCurrentResult }) {
-  const [crop, setCrop] = useState('Tomato');
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [selectedCrop, setSelectedCrop] = useState('Tomato');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -33,7 +31,7 @@ export default function Home({ onPredictionCompleted, currentResult, setCurrentR
     setErrorMessage(null);
   };
 
-  // Analyze leaf submission
+  // Analyze leaf severity submission
   const handleAnalyze = async (e) => {
     e.preventDefault();
 
@@ -48,7 +46,7 @@ export default function Home({ onPredictionCompleted, currentResult, setCurrentR
     try {
       const formData = new FormData();
       formData.append('image', file);
-      formData.append('crop', crop);
+      formData.append('crop', selectedCrop || 'Tomato');
 
       const response = await predictLeaf(formData);
 
@@ -58,10 +56,10 @@ export default function Home({ onPredictionCompleted, currentResult, setCurrentR
           onPredictionCompleted(response.data);
         }
       } else {
-        throw new Error(response.error || 'Inference returned unsuccessful status.');
+        throw new Error(response.error || 'Severity estimation returned an unsuccessful status.');
       }
     } catch (err) {
-      setErrorMessage(err.message || 'Prediction failed. Please check backend server and try again.');
+      setErrorMessage(err.message || 'Analysis failed. Please check backend server and try again.');
     } finally {
       setIsAnalyzing(false);
     }
@@ -69,13 +67,11 @@ export default function Home({ onPredictionCompleted, currentResult, setCurrentR
 
   return (
     <div className="home-page">
-      {/* Intro section */}
+      {/* Intro Section with Clear Messaging */}
       <div className="research-intro-banner">
-        <h2>Fine-Grained Crop Leaf Disease Severity Estimation</h2>
+        <h2>AI-Powered Crop Leaf Severity Analysis</h2>
         <p>
-          Upload a clear photograph of a crop leaf specimen to quantify disease presence,
-          categorize infection severity, and generate localized attention segmentation masks using
-          cross-domain Vision Transformer representations.
+          Upload a crop leaf image to estimate the severity of visible symptoms using our Vision Transformer-based AI model.
         </p>
       </div>
 
@@ -88,26 +84,56 @@ export default function Home({ onPredictionCompleted, currentResult, setCurrentR
 
       {/* Main Analysis Form */}
       <div className="card upload-workflow-card">
-        <div className="card-title">Specimen Input & Analysis Setup</div>
+        <div className="card-title">Specimen Ingestion & Severity Analysis</div>
 
-        <form onSubmit={handleAnalyze}>
-          <div className="grid-2-col">
-            <CropSelector
-              selectedCrop={crop}
-              onCropChange={setCrop}
-              disabled={isAnalyzing}
-            />
-
-            <div className="form-info-panel">
-              <label>Domain Head Configuration:</label>
-              <div className="info-box">
-                <div>Selected Model Target: <strong>{crop} Domain ViT</strong></div>
-                <div>Model Resolution: <strong>224 × 224 RGB</strong></div>
-                <div>Task: <strong>Fine-Grained Severity Estimation</strong></div>
-              </div>
+        <div className="model-spec-panel">
+          <div className="spec-badge">AI MODEL SPECIFICATIONS</div>
+          <div className="spec-grid">
+            <div className="spec-item">
+              <span className="spec-label">Architecture</span>
+              <span className="spec-val">Vision Transformer (ViT)</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Input Preprocessing</span>
+              <span className="spec-val">224 × 224 RGB • Mean [0.5, 0.5, 0.5]</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Severity Tiers</span>
+              <span className="spec-val">Healthy • Mild • Moderate • Severe</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Output</span>
+              <span className="spec-val">Class & Probability Breakdown</span>
             </div>
           </div>
+        </div>
 
+        <div className="crop-selection-section">
+          <div className="crop-select-header">
+            <label className="crop-select-label">Crop Specimen (Optional):</label>
+            <span className="crop-select-hint">Select the crop variety of the leaf you are uploading</span>
+          </div>
+          <div className="crop-pills-container">
+            {['Tomato', 'Potato', 'Rice', 'Wheat', 'Maize', 'Crop Leaf'].map((c) => (
+              <button
+                key={c}
+                type="button"
+                className={`crop-pill-btn ${selectedCrop === c ? 'active' : ''}`}
+                onClick={() => setSelectedCrop(c)}
+              >
+                {c === 'Tomato' && '🍅 '}
+                {c === 'Potato' && '🥔 '}
+                {c === 'Rice' && '🌾 '}
+                {c === 'Wheat' && '🌱 '}
+                {c === 'Maize' && '🌽 '}
+                {c === 'Crop Leaf' && '🍃 '}
+                {c === 'Crop Leaf' ? 'General Leaf' : c}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <form onSubmit={handleAnalyze}>
           <ImageUpload
             selectedFile={file}
             previewUrl={previewUrl}
@@ -125,10 +151,10 @@ export default function Home({ onPredictionCompleted, currentResult, setCurrentR
             >
               {isAnalyzing ? (
                 <>
-                  <span className="spinner"></span> Processing Inference...
+                  <span className="spinner"></span> Analyzing Severity...
                 </>
               ) : (
-                'Analyze Leaf'
+                'Analyze Severity'
               )}
             </button>
 
@@ -152,12 +178,6 @@ export default function Home({ onPredictionCompleted, currentResult, setCurrentR
       {currentResult && (
         <div className="results-container" id="prediction-results">
           <ResultCard result={currentResult} />
-
-          <SegmentationViewer
-            originalImageUrl={currentResult.imagePath || previewUrl}
-            segmentationMaskUrl={currentResult.segmentationMask}
-            maskType={currentResult.maskType}
-          />
         </div>
       )}
     </div>

@@ -83,7 +83,10 @@ export default function ImageUpload({
 
   return (
     <div className="image-upload-wrapper">
-      <label>Crop Leaf Image Upload:</label>
+      <div className="upload-header-text">
+        <label>Crop Leaf Image Upload</label>
+        <p className="upload-guide-hint">Upload a clear image of a single crop leaf for the best analysis.</p>
+      </div>
 
       {!previewUrl ? (
         <div
@@ -104,11 +107,11 @@ export default function ImageUpload({
             disabled={disabled}
           />
           <div className="dropzone-content">
-            <div className="upload-icon-box">📁</div>
+            <div className="upload-icon-box">🍃</div>
             <p className="upload-main-text">
-              <strong>Click to browse</strong> or drag & drop leaf image here
+              <strong>Drag and drop image here</strong> or <span className="browse-link">browse</span> from your computer
             </p>
-            <p className="upload-sub-text">Supported formats: JPG, JPEG, PNG (Max: 10MB)</p>
+            <p className="upload-sub-text">Supported formats: JPG, JPEG, PNG (Max size: 10MB)</p>
           </div>
         </div>
       ) : (
@@ -122,7 +125,7 @@ export default function ImageUpload({
               <span className="file-size">
                 {selectedFile?.size
                   ? `${(selectedFile.size / 1024).toFixed(1)} KB`
-                  : 'Image Ready'}
+                  : 'Ready for Severity Analysis'}
               </span>
             </div>
             <div className="preview-actions">
@@ -157,22 +160,22 @@ export default function ImageUpload({
 
       {/* Quick Test Samples */}
       <div className="sample-test-bar">
-        <span className="sample-label">Quick test samples:</span>
+        <span className="sample-label">Try sample test leaf:</span>
         <button
           type="button"
           className="btn btn-sm btn-secondary"
           onClick={() =>
-            loadSampleLeaf('/sample-leaves/tomato_late_blight.jpg', 'tomato_late_blight_sample.jpg')
+            loadSampleLeaf('/sample-leaves/tomato_late_blight.jpg', 'specimen_with_symptoms.jpg')
           }
           disabled={disabled}
         >
-          Sample Diseased Leaf (Tomato)
+          Sample Leaf with Symptoms
         </button>
         <button
           type="button"
           className="btn btn-sm btn-secondary"
           onClick={() =>
-            loadSampleLeaf('/sample-leaves/healthy_leaf.jpg', 'potato_healthy_leaf_sample.jpg')
+            loadSampleLeaf('/sample-leaves/healthy_leaf.jpg', 'healthy_leaf_specimen.jpg')
           }
           disabled={disabled}
         >
