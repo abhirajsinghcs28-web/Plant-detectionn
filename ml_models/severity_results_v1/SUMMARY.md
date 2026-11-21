@@ -1,0 +1,23 @@
+# Results summary
+mode: full, images: 7837, seeds: [42, 7, 2026], epochs: 8
+
+## Label check
+- false-positive lesion % on healthy leaves (mean): 0.54
+- within-class share of severity variance: 0.590
+
+## Test results (mean ± std over seeds)
+                                  acc       macro_f1            qwk qwk_diseased_only within_class_spearman        mae_pct    pearson_pct
+class_only_baseline             0.753          0.732          0.803             0.626                 0.000          7.346          0.660
+resnet50_ce             0.920 ± 0.008  0.916 ± 0.009  0.954 ± 0.003     0.911 ± 0.006         0.822 ± 0.016              –              –
+vit_ce                  0.924 ± 0.020  0.926 ± 0.017  0.958 ± 0.010     0.917 ± 0.022         0.853 ± 0.015              –              –
+vit_coral               0.879 ± 0.023  0.865 ± 0.026  0.938 ± 0.014     0.884 ± 0.023         0.790 ± 0.008              –              –
+PROPOSED_vit_coral_reg  0.897 ± 0.003  0.883 ± 0.005  0.948 ± 0.001     0.901 ± 0.002         0.905 ± 0.005  1.322 ± 0.024  0.986 ± 0.001
+vit_coral_reg_dann      0.820 ± 0.009  0.809 ± 0.012  0.914 ± 0.004     0.841 ± 0.004         0.856 ± 0.013  2.322 ± 0.460  0.974 ± 0.004
+
+## Bootstrap (QWK difference, proposed − other)
+- QWK diff vs vit_ce: -0.021 [-0.028, -0.012]
+- QWK diff vs vit_coral: +0.004 [-0.001, +0.010]
+- QWK diff vs resnet50_ce: -0.010 [-0.020, -0.000]
+
+## Explainability
+{"attention_in_lesion_ratio_median": 1.0999748685308508, "frac_images_ratio_gt1": 0.94, "n": 200}

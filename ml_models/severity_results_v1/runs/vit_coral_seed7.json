@@ -1,0 +1,107 @@
+{
+  "name": "vit_coral",
+  "arch": "vit",
+  "head": "coral",
+  "use_reg": false,
+  "use_dann": false,
+  "seed": 7,
+  "best_epoch": 2,
+  "test": {
+    "acc": 0.8534923339011925,
+    "macro_f1": 0.838497432355878,
+    "qwk": 0.9222423757802222,
+    "mae_grade": 0.151618398637138,
+    "qwk_diseased_only": 0.8582851145949073,
+    "within_class_spearman": 0.7884094891049431
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.333225147330273,
+      "val_acc": 0.7627551020408163,
+      "val_macro_f1": 0.743321289835589,
+      "val_qwk": 0.8855175151940873,
+      "val_mae_grade": 0.24489795918367346,
+      "val_qwk_diseased_only": 0.786771274323222,
+      "val_within_class_spearman": 0.7931709333242691,
+      "val_domain_acc": null
+    },
+    {
+      "epoch": 2,
+      "loss": 0.24366328704078294,
+      "val_acc": 0.858843537414966,
+      "val_macro_f1": 0.8389133378313867,
+      "val_qwk": 0.9298017081217019,
+      "val_mae_grade": 0.14200680272108843,
+      "val_qwk_diseased_only": 0.8756476683937824,
+      "val_within_class_spearman": 0.8084819508529568,
+      "val_domain_acc": null
+    },
+    {
+      "epoch": 3,
+      "loss": 0.22069543347372647,
+      "val_acc": 0.8767006802721088,
+      "val_macro_f1": 0.8560550481902485,
+      "val_qwk": 0.9413568401200101,
+      "val_mae_grade": 0.12329931972789115,
+      "val_qwk_diseased_only": 0.8922066040089828,
+      "val_within_class_spearman": 0.7758011964734204,
+      "val_domain_acc": null
+    },
+    {
+      "epoch": 4,
+      "loss": 0.2023709865167127,
+      "val_acc": 0.8596938775510204,
+      "val_macro_f1": 0.8334475724624004,
+      "val_qwk": 0.9342527021990309,
+      "val_mae_grade": 0.14030612244897958,
+      "val_qwk_diseased_only": 0.8789977592177632,
+      "val_within_class_spearman": 0.7965801260265184,
+      "val_domain_acc": null
+    },
+    {
+      "epoch": 5,
+      "loss": 0.18950750439139138,
+      "val_acc": 0.9056122448979592,
+      "val_macro_f1": 0.8909664120165018,
+      "val_qwk": 0.9520506789816134,
+      "val_mae_grade": 0.09523809523809523,
+      "val_qwk_diseased_only": 0.9120204161079631,
+      "val_within_class_spearman": 0.7572006535143152,
+      "val_domain_acc": null
+    },
+    {
+      "epoch": 6,
+      "loss": 0.1803564051961341,
+      "val_acc": 0.9081632653061225,
+      "val_macro_f1": 0.893088900124189,
+      "val_qwk": 0.9535221558063124,
+      "val_mae_grade": 0.09268707482993198,
+      "val_qwk_diseased_only": 0.9146551724137931,
+      "val_within_class_spearman": 0.7429471025949952,
+      "val_domain_acc": null
+    },
+    {
+      "epoch": 7,
+      "loss": 0.17539838914982755,
+      "val_acc": 0.9030612244897959,
+      "val_macro_f1": 0.886333635375475,
+      "val_qwk": 0.950869054131453,
+      "val_mae_grade": 0.0977891156462585,
+      "val_qwk_diseased_only": 0.9102938649252449,
+      "val_within_class_spearman": 0.740289716960054,
+      "val_domain_acc": null
+    },
+    {
+      "epoch": 8,
+      "loss": 0.17388900839968732,
+      "val_acc": 0.9005102040816326,
+      "val_macro_f1": 0.8829396305249324,
+      "val_qwk": 0.9499442406081604,
+      "val_mae_grade": 0.10034013605442177,
+      "val_qwk_diseased_only": 0.9084654501944361,
+      "val_within_class_spearman": 0.7429567568917003,
+      "val_domain_acc": null
+    }
+  ]
+}

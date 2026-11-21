@@ -1,0 +1,12 @@
+cls,n,mae_pct,spearman
+Apple___Black_rot,60.0,0.639,0.92
+Apple___Cedar_apple_rust,42.0,1.751,0.963
+Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot,60.0,2.1,0.985
+Corn_(maize)___Common_rust_,60.0,2.172,0.988
+Corn_(maize)___Northern_Leaf_Blight,60.0,3.056,0.909
+Grape___Black_rot,60.0,1.714,0.852
+Grape___Esca_(Black_Measles),60.0,1.866,0.969
+Grape___Leaf_blight_(Isariopsis_Leaf_Spot),60.0,3.222,0.983
+Tomato___Early_blight,60.0,2.979,0.904
+Tomato___Late_blight,53.0,3.441,0.914
+Tomato___Septoria_leaf_spot,59.0,1.586,0.964

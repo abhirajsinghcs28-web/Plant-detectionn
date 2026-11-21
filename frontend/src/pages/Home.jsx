@@ -87,23 +87,23 @@ export default function Home({ onPredictionCompleted, currentResult, setCurrentR
         <div className="card-title">Specimen Ingestion & Severity Analysis</div>
 
         <div className="model-spec-panel">
-          <div className="spec-badge">AI MODEL SPECIFICATIONS</div>
+          <div className="spec-badge">PROPOSED ViT (v2 FULL BENCHMARK - 94.1% ACCURACY)</div>
           <div className="spec-grid">
             <div className="spec-item">
-              <span className="spec-label">Architecture</span>
-              <span className="spec-val">Vision Transformer (ViT)</span>
+              <span className="spec-label">Model Architecture</span>
+              <span className="spec-val">PROPOSED_vit_ce_reg (ViT-B/16 Dual Head)</span>
             </div>
             <div className="spec-item">
-              <span className="spec-label">Input Preprocessing</span>
-              <span className="spec-val">224 × 224 RGB • Mean [0.5, 0.5, 0.5]</span>
+              <span className="spec-label">Validation Benchmark</span>
+              <span className="spec-val">94.1% Acc • 1.60% MAE • 0.973 QWK</span>
             </div>
             <div className="spec-item">
-              <span className="spec-label">Severity Tiers</span>
-              <span className="spec-val">Healthy • Mild • Moderate • Severe</span>
+              <span className="spec-label">Severity Tiers (Grade Edges)</span>
+              <span className="spec-val">Healthy (&lt;1%) • Mild (1-5%) • Moderate (5-20%) • Severe (≥20%)</span>
             </div>
             <div className="spec-item">
-              <span className="spec-label">Output</span>
-              <span className="spec-val">Class & Probability Breakdown</span>
+              <span className="spec-label">Interpretability</span>
+              <span className="spec-val">Multi-layer Attention Rollout (1.12 Lesion Ratio)</span>
             </div>
           </div>
         </div>
@@ -111,23 +111,24 @@ export default function Home({ onPredictionCompleted, currentResult, setCurrentR
         <div className="crop-selection-section">
           <div className="crop-select-header">
             <label className="crop-select-label">Crop Specimen (Optional):</label>
-            <span className="crop-select-hint">Select the crop variety of the leaf you are uploading</span>
+            <span className="crop-select-hint">Calibrated on PlantVillage v2 (Tomato, Corn, Grape, Apple)</span>
           </div>
           <div className="crop-pills-container">
-            {['Tomato', 'Potato', 'Rice', 'Wheat', 'Maize', 'Crop Leaf'].map((c) => (
+            {[
+              { id: 'Tomato', label: 'Tomato', icon: '🍅' },
+              { id: 'Corn_(maize)', label: 'Corn (Maize)', icon: '🌽' },
+              { id: 'Grape', label: 'Grape', icon: '🍇' },
+              { id: 'Apple', label: 'Apple', icon: '🍎' },
+              { id: 'Crop Leaf', label: 'General Leaf', icon: '🍃' },
+              { id: 'Potato', label: 'Potato', icon: '🥔' }
+            ].map((c) => (
               <button
-                key={c}
+                key={c.id}
                 type="button"
-                className={`crop-pill-btn ${selectedCrop === c ? 'active' : ''}`}
-                onClick={() => setSelectedCrop(c)}
+                className={`crop-pill-btn ${selectedCrop === c.id ? 'active' : ''}`}
+                onClick={() => setSelectedCrop(c.id)}
               >
-                {c === 'Tomato' && '🍅 '}
-                {c === 'Potato' && '🥔 '}
-                {c === 'Rice' && '🌾 '}
-                {c === 'Wheat' && '🌱 '}
-                {c === 'Maize' && '🌽 '}
-                {c === 'Crop Leaf' && '🍃 '}
-                {c === 'Crop Leaf' ? 'General Leaf' : c}
+                {c.icon} {c.label}
               </button>
             ))}
           </div>

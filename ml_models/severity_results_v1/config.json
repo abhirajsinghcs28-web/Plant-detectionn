@@ -1,0 +1,73 @@
+{
+  "RUN_MODE": "full",
+  "CFG": {
+    "CAP_PER_CLASS": 400,
+    "EPOCHS": 8,
+    "SEEDS": [
+      42,
+      7,
+      2026
+    ]
+  },
+  "CLASSES": [
+    "Apple___Apple_scab",
+    "Apple___Black_rot",
+    "Apple___Cedar_apple_rust",
+    "Apple___healthy",
+    "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+    "Corn_(maize)___Common_rust_",
+    "Corn_(maize)___Northern_Leaf_Blight",
+    "Corn_(maize)___healthy",
+    "Grape___Black_rot",
+    "Grape___Esca_(Black_Measles)",
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+    "Grape___healthy",
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Spider_mites Two-spotted_spider_mite",
+    "Tomato___Target_Spot",
+    "Tomato___healthy"
+  ],
+  "EXCLUDE": [
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus"
+  ],
+  "GRADE_EDGES": [
+    5.0,
+    20.0
+  ],
+  "HEALTHY_MODEL": {
+    "Apple": {
+      "h_lo": 49.0,
+      "s_lo": 17.0
+    },
+    "Corn_(maize)": {
+      "h_lo": 47.0,
+      "s_lo": 6.0
+    },
+    "Grape": {
+      "h_lo": 51.0,
+      "s_lo": 40.0
+    },
+    "Tomato": {
+      "h_lo": 43.0,
+      "s_lo": 20.9950008392334
+    }
+  },
+  "LABEL_INFO": {
+    "within_class_variance_fraction": 0.5898481045256744
+  },
+  "n_dropped_quality_gate": 38,
+  "n_images": 7837,
+  "split_counts": {
+    "train": 5487,
+    "val": 1176,
+    "test": 1174
+  },
+  "gpu": "Tesla T4",
+  "torch": "2.11.0+cu130",
+  "transformers": "5.22.0"
+}

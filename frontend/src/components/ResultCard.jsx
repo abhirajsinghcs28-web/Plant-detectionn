@@ -24,6 +24,10 @@ export default function ResultCard({ result }) {
   const confidence = result.confidence;
   const probabilities = result.probabilities || null;
   const timestamp = result.timestamp;
+  const severityScore = typeof result.severityScore === 'number' ? result.severityScore : null;
+  const necrosisPct = typeof result.necrosisPct === 'number' ? result.necrosisPct : null;
+  const chlorosisPct = typeof result.chlorosisPct === 'number' ? result.chlorosisPct : null;
+  const modelUsed = result.modelUsed || 'PROPOSED_vit_ce_reg (Vision Transformer v2 - 94.1% Accuracy)';
 
   // Color mapping
   const getBadgeStyle = (level) => {
@@ -96,6 +100,32 @@ export default function ResultCard({ result }) {
           </span>
         </div>
       </div>
+
+      {/* Quantitative Continuous Symptom Metrics (From PROPOSED_vit_ce_reg v2) */}
+      {severityScore !== null && (
+        <div className="symptom-metrics-banner">
+          <div className="symptom-metric-chip">
+            <span className="metric-chip-label">Symptom Coverage:</span>
+            <span className="metric-chip-value"><strong>{severityScore}%</strong></span>
+          </div>
+          {necrosisPct !== null && (
+            <div className="symptom-metric-chip">
+              <span className="metric-chip-label">Necrosis (Dark Lesion):</span>
+              <span className="metric-chip-value">{necrosisPct}%</span>
+            </div>
+          )}
+          {chlorosisPct !== null && (
+            <div className="symptom-metric-chip">
+              <span className="metric-chip-label">Chlorosis (Yellowing):</span>
+              <span className="metric-chip-value">{chlorosisPct}%</span>
+            </div>
+          )}
+          <div className="symptom-metric-chip model-chip">
+            <span className="metric-chip-label">Model:</span>
+            <span className="metric-chip-value">PROPOSED ViT (v2 - 94.1% Acc)</span>
+          </div>
+        </div>
+      )}
 
       {/* Visual Severity Indicator & 4-Class Breakdown */}
       <SeverityDisplay

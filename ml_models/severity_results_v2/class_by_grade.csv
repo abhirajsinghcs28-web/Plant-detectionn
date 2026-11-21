@@ -1,0 +1,16 @@
+cls,healthy,mild,moderate,severe
+Apple___Black_rot,0,326,71,3
+Apple___Cedar_apple_rust,0,120,118,37
+Apple___healthy,399,0,0,0
+Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot,0,46,163,191
+Corn_(maize)___Common_rust_,0,81,147,172
+Corn_(maize)___Northern_Leaf_Blight,0,23,224,152
+Corn_(maize)___healthy,399,0,0,0
+Grape___Black_rot,0,173,193,32
+Grape___Esca_(Black_Measles),0,64,262,74
+Grape___Leaf_blight_(Isariopsis_Leaf_Spot),0,23,58,319
+Grape___healthy,400,0,0,0
+Tomato___Early_blight,0,200,139,56
+Tomato___Late_blight,0,161,98,117
+Tomato___Septoria_leaf_spot,0,215,118,63
+Tomato___healthy,400,0,0,0

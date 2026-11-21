@@ -1109,3 +1109,45 @@
   color: #ffffff;
   box-shadow: 0 2px 4px rgba(22, 101, 52, 0.2);
 }
+
+/* Quantitative Continuous Symptom Metrics (PROPOSED_vit_ce_reg v2) */
+.symptom-metrics-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.symptom-metric-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #334155;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.symptom-metric-chip.model-chip {
+  margin-left: auto;
+  background-color: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+  font-weight: 600;
+}
+
+.metric-chip-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.metric-chip-value {
+  color: #0f172a;
+}

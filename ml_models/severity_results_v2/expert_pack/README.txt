@@ -1,0 +1,1 @@
+For each image in images/: estimate the percentage of the leaf area showing visible disease symptoms (dead/brown/dark tissue AND yellowing), 0-100, in column expert_pct; and a grade in expert_grade: 0 healthy, 1 mild (<5%), 2 moderate (5-20%), 3 severe (>=20%).

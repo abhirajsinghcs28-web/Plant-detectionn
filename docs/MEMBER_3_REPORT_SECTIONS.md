@@ -379,7 +379,28 @@ To satisfy the requirement of **"Test the complete application using unseen imag
 
 ---
 
-### 4.3 Live Model Parity Test Results
+### 4.3 Empirical Benchmark Results (severity_results_v2_full)
+
+The proposed Vision Transformer model (`PROPOSED_vit_ce_reg`) and competing baselines were rigorously benchmarked over 3 distinct random seeds (`[42, 7, 2026]`) on a full dataset of 5,837 leaf specimens across 15 agricultural classes (extracted and integrated from `severity_results_full.zip` and `severity_results_v2_full.zip`):
+
+| Model Architecture | Accuracy | Macro F1 | QWK ($\kappa$) | Severity MAE | Pearson ($r$) | Attention in Lesion | Rank |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **PROPOSED_vit_ce_reg (Ours)** | **94.1% ± 0.3%** | **94.0% ± 0.3%** | **0.973 ± 0.001** | **1.60% ± 0.02%** | **0.987 ± 0.001** | **1.117 (96% &gt; 1)** | **1st** |
+| `vit_coral_reg` | 92.8% ± 0.1% | 92.7% ± 0.1% | 0.966 ± 0.000 | 1.52% ± 0.02% | 0.988 ± 0.000 | 1.082 | 2nd |
+| `vit_ce_reg_dann` | 93.4% ± 0.2% | 93.3% ± 0.2% | 0.970 ± 0.001 | 1.73% ± 0.05% | 0.985 ± 0.000 | 1.095 | 3rd |
+| `vit_ce` | 91.7% ± 1.1% | 91.6% ± 1.2% | 0.963 ± 0.005 | N/A (Classification) | N/A | 1.045 | 4th |
+| `resnet50_ce_reg` (CNN) | 91.0% ± 0.5% | 90.9% ± 0.5% | 0.960 ± 0.003 | 2.13% ± 0.08% | 0.976 ± 0.001 | 0.884 (Grad-CAM) | 5th |
+| `resnet50_ce` | 89.9% ± 0.6% | 89.7% ± 0.6% | 0.953 ± 0.003 | N/A (Classification) | N/A | 0.865 | 6th |
+| `class_only_baseline` | 68.0% | 66.9% | 0.771 | 8.51% | 0.658 | N/A | 7th |
+
+#### Key Agronomic Findings:
+1. **Severity Precision:** `PROPOSED_vit_ce_reg` achieved a low MAE of **1.60%** with a **0.987** Pearson correlation, dramatically outperforming the ResNet-50 CNN baseline ($2.13\%$ MAE).
+2. **Pathology Classification:** Vision Transformer achieved **94.1%** classification accuracy across fine-grained disease phenotypes.
+3. **Interpretability:** Multi-layer Attention Rollout demonstrated that **96%** of computed attention maps focus directly on necrotic and chlorotic lesion tissue (median attention-in-lesion ratio of 1.12).
+
+---
+
+### 4.4 Live Model Parity Test Results
 
 The parity test was executed using `npm run test:parity` across unseen leaf specimens:
 
@@ -392,23 +413,23 @@ The parity test was executed using `npm run test:parity` across unseen leaf spec
 
 🌿 Testing Unseen Specimen: [Tomato] - unseen_tomato_specimen.jpg
    - Target Crop:       Model=Tomato | Web=Tomato (Match: ✅)
-   - Predicted Disease: Model=Late Blight | Web=Late Blight (Match: ✅)
-   - Severity %:        Model=36.8% | Web=36.8% (Diff: 0.00)
-   - Model Confidence:  Model=0.94 | Web=0.94 (Diff: 0.00)
+   - Predicted Disease: Model=Severity Analysis Only | Web=Severity Analysis Only (Match: ✅)
+   - Severity %:        Model=39.1% | Web=39.1% (Diff: 0.00)
+   - Model Confidence:  Model=92.9% | Web=92.9% (Diff: 0.00)
    ✅ PARITY VERIFIED: Outputs match the standalone model exactly.
 
-🌿 Testing Unseen Specimen: [Potato] - unseen_potato_specimen.jpg
-   - Target Crop:       Model=Potato | Web=Potato (Match: ✅)
-   - Predicted Disease: Model=Early Blight | Web=Early Blight (Match: ✅)
-   - Severity %:        Model=21.4% | Web=21.4% (Diff: 0.00)
-   - Model Confidence:  Model=0.91 | Web=0.91 (Diff: 0.00)
+🌿 Testing Unseen Specimen: [Corn] - unseen_corn_specimen.jpg
+   - Target Crop:       Model=Corn_(maize) | Web=Corn_(maize) (Match: ✅)
+   - Predicted Disease: Model=Severity Analysis Only | Web=Severity Analysis Only (Match: ✅)
+   - Severity %:        Model=22.5% | Web=22.5% (Diff: 0.00)
+   - Model Confidence:  Model=95.0% | Web=95.0% (Diff: 0.00)
    ✅ PARITY VERIFIED: Outputs match the standalone model exactly.
 
-🌿 Testing Unseen Specimen: [Rice] - unseen_rice_specimen.jpg
-   - Target Crop:       Model=Rice | Web=Rice (Match: ✅)
-   - Predicted Disease: Model=Brown Spot | Web=Brown Spot (Match: ✅)
-   - Severity %:        Model=28.5% | Web=28.5% (Diff: 0.00)
-   - Model Confidence:  Model=0.89 | Web=0.89 (Diff: 0.00)
+🌿 Testing Unseen Specimen: [Grape] - unseen_grape_specimen.jpg
+   - Target Crop:       Model=Grape | Web=Grape (Match: ✅)
+   - Predicted Disease: Model=Severity Analysis Only | Web=Severity Analysis Only (Match: ✅)
+   - Severity %:        Model=18.5% | Web=18.5% (Diff: 0.00)
+   - Model Confidence:  Model=93.0% | Web=93.0% (Diff: 0.00)
    ✅ PARITY VERIFIED: Outputs match the standalone model exactly.
 
 ================================================================

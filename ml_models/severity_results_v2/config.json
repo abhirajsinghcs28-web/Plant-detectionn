@@ -1,0 +1,106 @@
+{
+  "version": "v2",
+  "RUN_MODE": "full",
+  "CFG": {
+    "CAP_PER_CLASS": 400,
+    "EPOCHS": 8,
+    "SEEDS": [
+      42,
+      7,
+      2026
+    ]
+  },
+  "CLASSES": [
+    "Apple___Black_rot",
+    "Apple___Cedar_apple_rust",
+    "Apple___healthy",
+    "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+    "Corn_(maize)___Common_rust_",
+    "Corn_(maize)___Northern_Leaf_Blight",
+    "Corn_(maize)___healthy",
+    "Grape___Black_rot",
+    "Grape___Esca_(Black_Measles)",
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+    "Grape___healthy",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___healthy"
+  ],
+  "FIXED_EXCLUDE": [
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus"
+  ],
+  "AUTO_EXCLUDE": [
+    "Apple___Apple_scab",
+    "Tomato___Bacterial_spot",
+    "Tomato___Leaf_Mold",
+    "Tomato___Spider_mites Two-spotted_spider_mite",
+    "Tomato___Target_Spot"
+  ],
+  "SNR": {
+    "Apple___Apple_scab": 0.726,
+    "Apple___Black_rot": 2.077,
+    "Apple___Cedar_apple_rust": 4.819,
+    "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": 19.711,
+    "Corn_(maize)___Common_rust_": 16.57,
+    "Corn_(maize)___Northern_Leaf_Blight": 17.12,
+    "Grape___Black_rot": 5.323,
+    "Grape___Esca_(Black_Measles)": 9.397,
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": 60.067,
+    "Tomato___Bacterial_spot": 0.547,
+    "Tomato___Early_blight": 4.162,
+    "Tomato___Late_blight": 6.681,
+    "Tomato___Leaf_Mold": 0.717,
+    "Tomato___Septoria_leaf_spot": 3.488,
+    "Tomato___Spider_mites Two-spotted_spider_mite": 0.552,
+    "Tomato___Target_Spot": 0.994
+  },
+  "GRADE_EDGES": [
+    5.0,
+    20.0
+  ],
+  "HEALTHY_MODEL": {
+    "Apple": {
+      "h_lo": 50.0,
+      "s_lo": 17.0,
+      "v_lo": 0.2833307981491089,
+      "lr_lo": 0.4,
+      "fp_mean": 1.259559148125838
+    },
+    "Corn_(maize)": {
+      "h_lo": 47.0,
+      "s_lo": 6.0,
+      "v_lo": 0.3111072778701782,
+      "lr_lo": 0.65,
+      "fp_mean": 0.9169154818927587
+    },
+    "Grape": {
+      "h_lo": 54.0,
+      "s_lo": 40.0,
+      "v_lo": 0.459014892578125,
+      "lr_lo": 0.4,
+      "fp_mean": 1.1061456856598648
+    },
+    "Tomato": {
+      "h_lo": 43.0,
+      "s_lo": 21.0,
+      "v_lo": 0.17857004702091217,
+      "lr_lo": 0.4,
+      "fp_mean": 1.0973596375115344
+    }
+  },
+  "LABL_INFO": {
+    "within_class_variance_fraction": 0.5931037556000786
+  },
+  "n_dropped_quality_gate": 38,
+  "n_images": 5837,
+  "split_counts": {
+    "train": 4087,
+    "val": 876,
+    "test": 874
+  },
+  "gpu": "Tesla T4",
+  "torch": "2.11.0+cu130",
+  "transformers": "5.22.0"
+}
